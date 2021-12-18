@@ -31,6 +31,8 @@ func main() {
 	utils.CheckError(err)
 	errorList = append(errorList, errorChan)
 
+	// Fan out to multiple workers
+	// Number of workers started = parrallelExec
 	for i := 0; i < parrallelExec; i++ {
 		filteredModels, errorChan, err := parser.Filter(ctx, models)
 		utils.CheckError(err)
@@ -43,6 +45,7 @@ func main() {
 		exampleModelList = append(exampleModelList, transformedModels)
 	}
 
+	// Fan in the results of the workers
 	for i := range utils.MergeFanIn(ctx, exampleModelList...) {
 		fmt.Println(i)
 	}
